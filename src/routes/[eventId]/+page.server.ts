@@ -22,8 +22,8 @@ export const actions: Actions = {
         if (!title || !date) {
             error(400, 'Title and Date are required');
         }
-        const updated = await updateEventById(id, {title, description, date});
+        await updateEventById(id, {title, description, date});
 
-        return updated;
+        return new Response(null, { status: 200 });
     }
 }
