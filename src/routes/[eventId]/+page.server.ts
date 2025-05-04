@@ -1,5 +1,6 @@
+import { error, fail } from "@sveltejs/kit";
+import { validateEventFormData } from "$lib";
 import { fetchEventById, updateEventById } from "$lib/server/remote-events";
-import { error } from "@sveltejs/kit";
 
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -13,17 +14,26 @@ export const load: PageServerLoad = async ({params}) => {
 
 export const actions: Actions = {
     default: async ({request}) => {
-        const formdata = await request.formData();
-        const id = parseInt(formdata.get('id')?.toString() || '', 10);
+        try {
+            const formData = await request.formData();
+            const id = parseInt(formData.get('id')?.toString() || '', 10);
+    
+			const result = validateEventFormData(formData);
 
-        const title = formdata.get('title')?.toString();
-        const description = formdata.get('description')?.toString();
-        const date = formdata.get('date')?.toString();
-        if (!title || !date) {
-            error(400, 'Title and Date are required');
+			if (!result.success) {
+                return fail(400, result);
+            }
+
+			const { title, description, date } = result;
+
+            await updateEventById(id, {title, description, date});
+
+            return {success: true, message: 'Event Updated!'}
+        }  catch (err) {
+            console.error(err);
+            return error(500, { message: 'Unexpected failure during update event' });
         }
-        await updateEventById(id, {title, description, date});
 
-        return new Response(null, { status: 200 });
+
     }
 }

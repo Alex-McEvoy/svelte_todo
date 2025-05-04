@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+    import { page } from '$app/state';
+    import { goto } from '$app/navigation';
+    import Toast from '../toast/Toast.svelte';
 	import type { Event } from '$lib/components/simple-form/types';
+	import { redirect } from '@sveltejs/kit';
 
 	let { data }: { data?: Event } = $props();
 
@@ -9,6 +13,8 @@
 	let title = $state(data?.title || '');
 	let description = $state(data?.description || '');
 	let date = $state(data?.date || '');
+
+    let userMessage = $state({ success: true, message: '' });
 
 	let loading = $state(false);
 </script>
@@ -23,7 +29,18 @@
 				reset: false
 			});
 
+            // Note to self, let {form} = $props() data is only updated in Actions on the top route level
+            // Use page data to get form updates in this nested component
+            if (page?.form?.message) {
+                userMessage = page.form;
+            }
+
 			loading = false;
+
+            // Optional client side redirect
+            if (page?.form?.redirect) {
+                goto(page?.form?.redirect);
+            }
 		};
 	}}
 >
@@ -59,6 +76,9 @@
 		{loading ? 'Loading...' : buttonText}
 	</button>
 </form>
+
+<Toast input={userMessage} />
+
 
 <style>
 	form {

@@ -62,7 +62,7 @@
 	{/await}
 </div>
 
-<a class="newEvent_button" href="/newevent" role="button">Add Event</a>
+<a class="newEvent_button" href="/new-event" role="button">Add Event</a>
 
 <style>
 	.events_container {

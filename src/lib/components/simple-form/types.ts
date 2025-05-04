@@ -5,3 +5,4 @@ export interface Event {
     description?: string;
     date: string; // ISO 8601 format (e.g., '2025-01-01T12:00:00Z')
 }
+
