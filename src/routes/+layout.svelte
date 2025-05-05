@@ -1,4 +1,13 @@
 <script lang="ts">
+	/**
+	 * @component Layout
+	 * @description
+	 * The root layout component for the application.
+	 * This component serves as the base structure for all pages,
+	 * providing shared layout elements such as headers, footers,
+	 * or navigation that persist across different routes.
+	 */
+	
 	import { setContext } from 'svelte';
 	import '../app.css';
 	import { isLoading, LOADING_CONTEXT_KEY } from '$lib';
@@ -25,7 +34,12 @@
 
 	{#if $isLoading}
 		<div class="loadingModal">
-			<img src="/Spinner@1x-1.0s-200px-200px.svg" alt="Loading..." class="spinner" style="width: 100px; height: 100px;" />
+			<img
+				src="/Spinner@1x-1.0s-200px-200px.svg"
+				alt="Loading..."
+				class="spinner"
+				style="width: 100px; height: 100px;"
+			/>
 		</div>
 	{/if}
 

@@ -1,4 +1,16 @@
 <script>
+	/**
+	 * @component EventCard
+	 * @description
+	 * A reusable component that represents an individual event card.
+	 * This component is designed to display event-related information
+	 * such as title, date, location, and other relevant details.
+	 *
+	 * @props
+	 * - `eventData` (Object): The data object containing event details
+	 *   such as title, date, and location.
+	 */
+
 	let { event, deleteEvent, deletingId } = $props();
 </script>
 
@@ -25,7 +37,7 @@
 		flex-flow: row;
 		justify-content: space-between;
 		align-items: center;
-        position: relative;
+		position: relative;
 		border: 1px solid #ccc;
 		padding: 16px;
 		margin: 2px 0;

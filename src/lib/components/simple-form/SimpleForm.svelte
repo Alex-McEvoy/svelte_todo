@@ -1,4 +1,20 @@
 <script lang="ts">
+	/**
+	 * @component SimpleForm
+	 * @description
+	 * A reusable form component designed to simplify the creation of forms
+	 * with customizable fields and validation. This component can be used
+	 * to handle user input and submit data in a structured way.
+	 *
+	 * @props
+	 * - `fields` (Array): An array of objects defining the form fields,
+	 *   including their types, labels, and validation rules.
+	 * - `onSubmit` (Function): A callback function triggered when the form
+	 *   is submitted, receiving the form data as an argument.
+	 * - `initialValues` (Object, optional): An object containing initial
+	 *   values for the form fields.
+	 */
+
 	import { getContext } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
@@ -18,12 +34,13 @@
 
 	const { isLoading } = getContext<LoadingContext>(LOADING_CONTEXT_KEY);
 
-	let currentlyLoading = $state($isLoading);
+	let currentlyLoading = $derived($isLoading);
 </script>
 
 <form
 	method="POST"
 	use:enhance={() => {
+		// TODO: move this into script, the typing of the enhance event was giving me trouble
 		isLoading.set(true);
 
 		return async ({ update }) => {

@@ -1,14 +1,30 @@
 <script lang="ts">
+	/**
+	 * @component Toast
+	 * @description
+	 * A reusable component for displaying toast notifications.
+	 * This component is designed to show brief messages to the user,
+	 * such as success, error, or informational alerts, and automatically
+	 * dismisses after a specified duration.
+	 *
+	 * @props
+	 * - `message` (string): The text content of the toast notification.
+	 * - `type` (string): The type of the toast (e.g., 'success', 'error', 'info')
+	 *   to determine its styling.
+	 * - `duration` (number): The duration in milliseconds for which the toast
+	 *   will be visible before automatically dismissing.
+	 */
+
 	import { fly, fade } from 'svelte/transition';
 
 	let { input } = $props();
 
-    let isVisible = $state(true);
+	let isVisible = $state(true);
 	const onDismiss: () => void = () => (isVisible = false);
 
-    $effect(() => {
-        isVisible = input?.message ? true : false;
-    })
+	$effect(() => {
+		isVisible = input?.message ? true : false;
+	});
 </script>
 
 {#if input?.message && isVisible}
@@ -19,13 +35,7 @@
 	>
 		{input.message}
 
-        <button
-            class="close-btn"
-            onclick={onDismiss}
-            aria-label="Close"
-        >
-            &times;
-        </button>
+		<button class="close-btn" onclick={onDismiss} aria-label="Close"> &times; </button>
 	</div>
 {/if}
 
@@ -33,9 +43,9 @@
 	.toast {
 		position: fixed;
 		bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        flex-flow: row;
+		display: flex;
+		justify-content: space-between;
+		flex-flow: row;
 		left: 50%;
 		transform: translateX(-50%);
 		padding: 1rem 2rem;

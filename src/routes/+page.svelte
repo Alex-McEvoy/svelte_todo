@@ -11,17 +11,16 @@
 
 	const { isLoading } = getContext<LoadingContext>(LOADING_CONTEXT_KEY);
 
-	// Set loading to true on mount
 	onMount(() => {
 		isLoading.set(true);
 	});
 
 	$effect(() => {
-		eventsPromise
-		.then(() => isLoading.set(false))
-		.catch(() => isLoading.set(false));
+		eventsPromise.then(() => isLoading.set(false)).catch(() => isLoading.set(false));
 	});
 
+	// I'm still not sure if we needed to create a new api endpoint, instead of calling
+	// the delete method on the event endpoint directly, but it was good practice
 	async function deleteEvent(id: number) {
 		try {
 			deletingId = id;
@@ -69,14 +68,6 @@
 		mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 		-webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 		margin-bottom: 1%;
-	}
-
-	.events_loader {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		z-index: 10;
 	}
 
 	.newEvent_container {
