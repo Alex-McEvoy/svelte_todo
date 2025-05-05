@@ -1,19 +1,90 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
+	import { getContext, onMount } from 'svelte';
+	import type { PageData } from './$types';
+	import { EventCard, LOADING_CONTEXT_KEY } from '$lib';
+	import type { LoadingContext } from '$lib';
 
-    let {data}: {data: PageData} = $props();
+	let { data }: { data: PageData } = $props();
+
+	let eventsPromise = $state(data.events);
+	let deletingId: number | null = $state(null);
+
+	const { isLoading } = getContext<LoadingContext>(LOADING_CONTEXT_KEY);
+
+	onMount(() => {
+		isLoading.set(true);
+	});
+
+	$effect(() => {
+		eventsPromise.then(() => isLoading.set(false)).catch(() => isLoading.set(false));
+	});
+
+	// I'm still not sure if we needed to create a new api endpoint, instead of calling
+	// the delete method on the event endpoint directly, but it was good practice
+	async function deleteEvent(id: number) {
+		try {
+			deletingId = id;
+			await fetch(`/${id}`, {
+				method: 'DELETE'
+			});
+
+			const currentEvents = await eventsPromise;
+			const updatedEvents = currentEvents.filter((e) => e.id !== id);
+
+			eventsPromise = Promise.resolve([...updatedEvents]);
+		} catch (error) {
+			// TODO surface this to the user
+			console.error('Delete failed', error);
+		} finally {
+			deletingId = null;
+		}
+	}
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<div class="events_container">
+	{#await eventsPromise}
+		<p>Loading...</p>
+	{:then events}
+		{#each events as event}
+			<EventCard {event} {deleteEvent} {deletingId} />
+		{/each}
+	{:catch error}
+		<p>Error loading event: {error.message}</p>
+	{/await}
+</div>
 
-<h1 class="text-xl">Events</h1>
-{#each data.events as event}
-    <div>
-        <h2 class="text-lg font-bold">{event.id}: {event.title}</h2>
-        <p>{event.description}</p>
-        <p>{event.date}</p>
-    </div>
-{/each}
+<a class="newEvent_container" href="/new-event" role="button">
+	<img src="/plusIcon.svg" alt="Add Event" class="newEvent_icon" width="24" height="24" />
+	<div class="newEvent_button">Add Event</div>
+</a>
 
-<a class="btn" href="/newevent" role="button">Add Event</a>
+<style>
+	.events_container {
+		width: 100%;
+		max-height: 98vh;
+		overflow: scroll;
+		gap: 5px;
+		border-radius: 10px;
+		mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+		-webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+		margin-bottom: 1%;
+	}
+
+	.newEvent_container {
+		display: flex;
+		flex-flow: row nowrap;
+		align-items: center;
+		justify-content: flex-start;
+		justify-self: flex-end;
+		width: 100%;
+		margin-top: auto;
+		background-color: white;
+		padding-left: 2%;
+		border-radius: 3px;
+	}
+
+	.newEvent_button {
+		display: inline-block;
+		padding: 8px 16px;
+	}
+</style>
